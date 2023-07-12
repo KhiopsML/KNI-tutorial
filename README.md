@@ -1,5 +1,5 @@
 
-# Khiops Native Interface examples
+# Khiops Native Interface examples 10.1.4
 
 The purpose of Khiops Native Interface (KNI) is to allow a deep integration of Khiops in information systems, by the mean of the C programming language, using a dynamic link library (DLL). This relates especially to the problem of model deployment, which otherwise requires the use of input and output data files when using directly the Khiops tool in batch mode. See the [Khiops Guide](https://khiops.com/pdf/KhiopsGuide.pdf) for an introduction to dictionary files, dictionaries, database files and deployment.
 
