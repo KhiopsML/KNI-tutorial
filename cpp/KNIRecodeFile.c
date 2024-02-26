@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Orange. All rights reserved.
+// Copyright (c) 2024 Orange. All rights reserved.
 // This software is distributed under the BSD 3-Clause-clear License, the text of which is available
 // at https://spdx.org/licenses/BSD-3-Clause-Clear.html or see the "LICENSE" file for more details.
 
@@ -105,13 +105,12 @@ int KNIRecodeFile(const char* sDictionaryFileName, const char* sDictionaryName, 
 	return nRecordNumber;
 }
 
-void main(int argc, char** argv)
+void mainKNIRecodeFile(int argc, char** argv)
 {
 	// Display parameters
 	if (argc != 5 && argc != 6)
 	{
 		printf("Deploy <Dictionary file> <Dictionary> <Input File> <Output File> [Error file] \n");
-		exit(1);
 	}
 	// Execute command
 	else
@@ -123,5 +122,11 @@ void main(int argc, char** argv)
 		else
 			KNIRecodeFile(argv[1], argv[2], argv[3], argv[4], argv[5]);
 	}
-	exit(0);
+}
+
+
+int main(int argv, char** argc)
+{
+	mainKNIRecodeFile(argv, argc);
+ 	return 0;
 }

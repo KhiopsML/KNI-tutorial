@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Orange. All rights reserved.
+// Copyright (c) 2024 Orange. All rights reserved.
 // This software is distributed under the BSD 3-Clause-clear License, the text of which is available
 // at https://spdx.org/licenses/BSD-3-Clause-Clear.html or see the "LICENSE" file for more details.
 
@@ -616,7 +616,7 @@ int KNIRecodeMTFiles(KNIMTRecodingOperands* recodingOperands)
 							    sSecondaryRecords[nFileIndex]);
 							if (nVerbose >= 2)
 							{
-								char* sSigns = "<=>";
+								const char* sSigns = "<=>";
 								printf("  %c %.20s: %.20s\n", sSigns[nCompare + 1],
 								       recodingOperands->SecondaryFiles[nFileIndex]
 									   .DataPath,
@@ -708,7 +708,7 @@ int KNIRecodeMTFiles(KNIMTRecodingOperands* recodingOperands)
  * These key fields index do not belong to the KNI API, but they are necessary in this
  * sample code to read all the input files synchronously.
  */
-void main(int argc, char** argv)
+void mainKNIRecodeMTFiles(int argc, char** argv)
 {
 	KNIMTRecodingOperands recodingOperands;
 	int retCode;
@@ -733,10 +733,15 @@ void main(int argc, char** argv)
 		printf("The main input file must be the first one.\n");
 		printf("For input files in multi-tables schema, the index of the key fields (starting at 1) must be "
 		       "specified.\n");
-		exit(1);
 	}
 	// Recode files
 	else
 		KNIRecodeMTFiles(&recodingOperands);
-	exit(0);
+}
+
+
+int main(int argv, char** argc)
+{
+	mainKNIRecodeMTFiles(argv, argc);
+ 	return 0;
 }

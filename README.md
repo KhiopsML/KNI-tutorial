@@ -1,19 +1,49 @@
 
-# Khiops Native Interface examples
+# Khiops Native Interface  v10.2.0
 
-The purpose of Khiops Native Interface (KNI) is to allow a deep integration of Khiops in information systems, by the mean of the C programming language, using a dynamic link library (DLL). This relates especially to the problem of model deployment, which otherwise requires the use of input and output data files when using directly the Khiops tool in batch mode. See the [Khiops Guide](https://khiops.com/pdf/KhiopsGuide.pdf) for an introduction to dictionary files, dictionaries, database files and deployment.
+This project provides all the basics to use the Khiops Native Interface (KNI): installation and examples.
 
-The Khiops deployment features are thus made public through an API with a DLL. Therefore, a Khiops model can be deployed directly from any programming language, such as C, C++, Java, Python, Matlab... This enables model deployment in real time application (e.g. scoring in a marketing context, targeted advertising on the web) without the overhead of temporary data files or launching executables.
+The purpose of KNI is to allow a deeper integration of Khiops in information systems, by mean of the C programming language, using a dynamic link library (DLL). This relates specially to the problem of model deployment, which otherwise requires the use of input and output data files when using directly the Khiops tool in batch mode. See Khiops Guide for an introduction to dictionary files, dictionaries, database files and deployment.
 
-All KNI functions are C functions for easier use with other programming languages. They return a positive or null value in case of success, and a negative error code in case of failure. The functions are not reentrant (thread-safe): the DLL can be used simultaneously by several executables, but not simultaneously by several threads in the same executable.
+The Khiops deployment features are thus made public through an API with a DLL. Therefore, a Khiops model can be deployed directly from any programming language, such as C, C++, Java, Python, Matlab, etc. This enables real time model deployment without the overhead of temporary data files or launching executables. This is critical for certain applications in marketing or targeted advertising on the web.
+
+All KNI functions are C functions for easy use with other programming languages. They return a positive or null value in case of success, and a negative error code in case of failure.
 
 See [KhiopsNativeInterface.h](include/KhiopsNativeInterface.h) for a detailed description of KNI functions.
 
+> [!CAUTION]
+> The functions are not reentrant (thread-safe): the DLL can be used simultaneously by several executables, but not simultaneously by several threads in the same executable.
+
+
+
+
 # KNI installation
 
-On windows, download the zip and extract it into the root ditectory of this repository.
+## Windows
 
-On linux TODO 
+Download [KNI-10.2.0.zip](https://github.com/KhiopsML/khiops/releases/tag/10.2.0/KNI-10.2.0.zip) and extract it to your machine. Set the environment variable `KNI_HOME` to the extracted directory. This variable is used in the following examples.
+
+## Linux
+
+On linux, the name of the package begins with **kni** and ends with the **code name** of the OS. The code name is in the release file of the distribution (here, it is jammy):
+```bash
+$ cat /etc/os-release
+PRETTY_NAME="Ubuntu 22.04.4 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.4 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=jammy
+```
+Download the package according to the code name of your OS and install it with dpkg or yum:
+- on debian-like distros: `sudo dpkg -i kni*.deb`
+- on fedora-like distros: `sudo yum localinstall kni*.rpm`
 
 # Application examples
 
@@ -23,12 +53,12 @@ Both examples in C and Java produce a sample binary `KNIRecodeFile`. It recodes 
 KNIRecodeFile <Dictionary file> <Dictionary> <Input File> <Output File> [Error file]
 # The input file must have a header line, describing the structure of all its instances.
 # The input and output files have a tabular format.
-# The error file may be useful for debuging purpose. It is optional and may be empty.
+# The error file may be useful for debugging purposes. It is optional and may be empty.
 ```
 
 A more complex example (available only in C) is `KNIRecodeMTFiles`, it recodes a set of multi-tables input files to an output file.
 
-```batch
+```bash
 KNIRecodeMTFiles
   -d: <input dictionary file> <input dictionary>
   [-f: <field separator>
@@ -44,22 +74,20 @@ KNIRecodeMTFiles
 
 The files are located in [cpp directory](cpp/). They allow to build `KNIRecodeFile` and `KNIRecodeMTFiles`.
 
-## Build
+## Building the examples
 
 On linux:
 
 ```bash
-gcc -o KNIRecodeFile cpp/KNIRecodeFile.c -lKhiopsNativeInterface -ldl
-gcc -o KNIRecodeMTFiles cpp/KNIRecodeMTFiles.c -lKhiopsNativeInterface -ldl
+gcc -o KNIRecodeFile cpp/KNIRecodeFile.c -I /usr/include/ -lKhiopsNativeInterface  -ldl
+gcc -o KNIRecodeMTFiles cpp/KNIRecodeMTFiles.c  -I /usr/include/ -lKhiopsNativeInterface -ldl
 ```
 
-On windows, with microsoft compiler:
+On windows, open a "Visual Studio Developer Console" and run:
 
-```batch
-REM Set Microsoft Visual Studio environement 2019 (change in case of another compiler)
-call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall" x64
-cl KNITest.c KNIRecodeFile.c KNIRecodeMTFiles.c KhiopsNativeInterface64.lib \
-    -I include /link "/LIBPATH:..\PATH\TO\KNI\"
+```cmd
+cl cpp/KNIRecodeFile.c %KNI_HOME%\lib\KhiopsNativeInterface64.lib -I %KNI_HOME%\include /link "/LIBPATH:%KNI_HOME%\bin"
+cl cpp/KNIRecodeMTFiles.c %KNI_HOME%\lib\KhiopsNativeInterface64.lib -I %KNI_HOME%\include /link "/LIBPATH:%KNI_HOME%\bin"
 ```
 
 ## Launch
@@ -81,12 +109,13 @@ KNIRecodeMTFiles -d data/ModelingSpliceJunction.kdic SNB_SpliceJunction -i .data
 
 The files are located in [java directory](java/). They allow to build `KNIRecodeFile.jar`. This example use [JNA](https://github.com/twall/jna#readme) to make calls to KhiopsNativeInterface.so/dll from Java.
 
-## Build
+## Building the examples
 
 To compile Java files and create kni.jar file:
 
 ```bash
-javac -cp jna.jar KNIRecodeFile.java KNI.java
+cd java
+javac -cp jna-5.13.0.jar KNIRecodeFile.java KNI.java
 jar cf kni.jar *.class
 ```
 
@@ -94,7 +123,14 @@ jar cf kni.jar *.class
 
 Recodes the iris dataset from the data directory using the SNB_Iris dictionary.
 
+On Linux:
+
 ```bash
-java -d64 -cp kni.jar;jna.jar KNIRecodeFile data/ModelingIris.kdic SNB_Iris \
-      data/Iris.txt data/R_Iris.txt > data/test.log 2>&1
+java -cp java/kni.jar:java/jna-5.13.0.jar KNIRecodeFile data/ModelingIris.kdic SNB_Iris data/Iris.txt R_Iris_java.txt 2>&1
+```
+
+On Windows:
+
+```bash
+java -cp java/kni.jar;java/jna-5.13.0.jar KNIRecodeFile data/ModelingIris.kdic SNB_Iris data/Iris.txt R_Iris_java.txt 2>&1
 ```
