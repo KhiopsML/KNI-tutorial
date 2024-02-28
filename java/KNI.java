@@ -8,7 +8,7 @@ import com.sun.jna.Memory;
 public interface KNI extends Library
 {
 
-        public final static String LIBRARY_WINDOWS_NAME_64 = "KhiopsNativeInterface64.dll";
+        public final static String LIBRARY_WINDOWS_NAME_64 = "KhiopsNativeInterface.dll";
 
         public final static String LIBRARY_LINUX_NAME = "libKhiopsNativeInterface.so";
 
