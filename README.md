@@ -113,9 +113,6 @@ The files are located in [java directory](java/). They allow to build `KNIRecode
 To compile Java files and create the `kni.jar` file:
 
 ```bash
-ls
-echo "-java-"
-ls java/
 javac -cp jna.jar java/KNIRecodeFile.java java/KNI.java
 jar cf kni.jar -C java KNI.class -C java KNIRecodeFile.class
 
