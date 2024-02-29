@@ -5,9 +5,9 @@ This project provides all the basics to use the Khiops Native Interface (KNI): i
 
 The purpose of KNI is to allow a deeper integration of Khiops in information systems, by mean of the C programming language, using a shared library (`.dll` in Windows, `.so` in Linux). This relates specially to the problem of model deployment, which otherwise requires the use of input and output data files when using directly the Khiops tool in batch mode. See Khiops Guide for an introduction to dictionary files, dictionaries, database files and deployment.
 
-The Khiops deployment API is thus made public through a shared library. Therefore, a Khiops model can be deployed directly from any programming language, such as C, C++, Java, Python, Matlab, etc. This enables real time model deployment without the overhead of temporary data files or launching executables. This is critical for certain applications in marketing or targeted advertising on the web.
+The Khiops deployment API is thus made public through a shared library. Therefore, a Khiops model can be deployed directly from any programming language, such as C, C++, Java, Python, Matlab, etc. This enables real time model deployment without the overhead of temporary data files or launching executables. This is critical for certain applications, such as marketing or targeted advertising on the web..
 
-All KNI functions are C functions for easy use with other programming languages. They return a positive or null value in case of success, and a negative error code in case of failure.
+All KNI functions are C functions for easy use with other programming languages. They return a positive or zero value in case of success, and a negative error code in case of failure.
 
 See [KhiopsNativeInterface.h](include/KhiopsNativeInterface.h) for a detailed description of KNI functions.
 
@@ -83,8 +83,10 @@ gcc -o KNIRecodeMTFiles cpp/KNIRecodeMTFiles.c  -I /usr/include/ -lKhiopsNativeI
 On Windows, open a "Visual Studio Developer Console" and run:
 
 ```cmd
-cl cpp/KNIRecodeFile.c %KNI_HOME%\lib\KhiopsNativeInterface.lib -I %KNI_HOME%\include /link "/LIBPATH:%KNI_HOME%\bin"
-cl cpp/KNIRecodeMTFiles.c %KNI_HOME%\lib\KhiopsNativeInterface.lib -I %KNI_HOME%\include /link "/LIBPATH:%KNI_HOME%\bin"
+cl cpp/KNIRecodeFile.c %KNI_HOME%\lib\KhiopsNativeInterface.lib ^
+    -I %KNI_HOME%\include /link "/LIBPATH:%KNI_HOME%\bin"
+cl cpp/KNIRecodeMTFiles.c %KNI_HOME%\lib\KhiopsNativeInterface.lib ^
+    -I %KNI_HOME%\include /link "/LIBPATH:%KNI_HOME%\bin"
 ```
 
 ## Launch
@@ -98,8 +100,8 @@ KNIRecodeFile data/ModelingIris.kdic SNB_Iris data/Iris.txt R_Iris.txt
 Recode the "Splice Junction" multi-table dataset using the `SNB_SpliceJunction` classifier dictionary.
 
 ```bash
-KNIRecodeMTFiles -d data/ModelingSpliceJunction.kdic SNB_SpliceJunction -i .data/SpliceJunction.txt 1 \
-    -s DNA  data/SpliceJunctionDNA.txt 1 -o R_SpliceJunction.txt
+KNIRecodeMTFiles -d data/ModelingSpliceJunction.kdic SNB_SpliceJunction \
+    -i .data/SpliceJunction.txt 1 -s DNA  data/SpliceJunctionDNA.txt 1 -o R_SpliceJunction.txt
 ```
 
 # Example with Java
@@ -111,9 +113,12 @@ The files are located in [java directory](java/). They allow to build `KNIRecode
 To compile Java files and create the `kni.jar` file:
 
 ```bash
-cd java
-javac -cp jna-5.13.0.jar KNIRecodeFile.java KNI.java
-jar cf kni.jar *.class
+ls
+echo "-java-"
+ls java/
+javac -cp jna.jar java/KNIRecodeFile.java java/KNI.java
+jar cf kni.jar -C java KNI.class -C java KNIRecodeFile.class
+
 ```
 
 ## Launch
@@ -123,11 +128,14 @@ Recodes the "Iris" dataset from the data directory using the `SNB_Iris` classifi
 On Linux:
 
 ```bash
-java -cp java/kni.jar:java/jna-5.13.0.jar KNIRecodeFile data/ModelingIris.kdic SNB_Iris data/Iris.txt R_Iris_java.txt 2>&1
+java -cp kni.jar:jna.jar KNIRecodeFile data/ModelingIris.kdic SNB_Iris \
+    data/Iris.txt R_Iris_java.txt
 ```
 
 On Windows:
 
-```bash
-java -cp java/kni.jar;java/jna-5.13.0.jar KNIRecodeFile data/ModelingIris.kdic SNB_Iris data/Iris.txt R_Iris_java.txt 2>&1
+```cmd
+set path=%KNI_HOME%/bin;%path%
+java -cp kni.jar;jna.jar KNIRecodeFile data/ModelingIris.kdic ^
+    SNB_Iris data/Iris.txt R_Iris_java.txt
 ```
