@@ -1,5 +1,5 @@
 
-# Khiops Native Interface  v10.2.0
+# Khiops Native Interface  v10.2.3
 
 This project provides all the basics to use the Khiops Native Interface (KNI): installation and examples.
 
@@ -18,11 +18,11 @@ See [KhiopsNativeInterface.h](include/KhiopsNativeInterface.h) for a detailed de
 
 ## Windows
 
-Download [KNI-10.2.0.zip](https://github.com/KhiopsML/khiops/releases/tag/10.2.0/KNI-10.2.0.zip) and extract it to your machine. Set the environment variable `KNI_HOME` to the extracted directory. This variable is used in the following examples.
+Download [KNI-10.2.3.zip](https://github.com/KhiopsML/khiops/releases/tag/10.2.3/KNI-10.2.3.zip) and extract it to your machine. Set the environment variable `KNI_HOME` to the extracted directory. This variable is used in the following examples.
 
 ## Linux
 
-On Linux, go to the [release page](https://github.com/KhiopsML/khiops/releases/tag/10.2.0/) and download the KNI package. The name of the package begins with **kni** and ends with the **code name** of the OS. The code name is in the release file of the distribution (here, it is "jammy"):
+On Linux, go to the [release page](https://github.com/KhiopsML/khiops/releases/tag/10.2.3/) and download the KNI package. The name of the package begins with **kni** and ends with the **code name** of the OS. The code name is in the release file of the distribution (here, it is "jammy"):
 ```bash
 $ cat /etc/os-release
 PRETTY_NAME="Ubuntu 22.04.4 LTS"
@@ -76,8 +76,8 @@ The files are located in [cpp directory](cpp/). They allow to build `KNIRecodeFi
 On Linux:
 
 ```bash
-gcc -o KNIRecodeFile cpp/KNIRecodeFile.c -I /usr/include/ -lKhiopsNativeInterface  -ldl
-gcc -o KNIRecodeMTFiles cpp/KNIRecodeMTFiles.c  -I /usr/include/ -lKhiopsNativeInterface -ldl
+gcc -o KNIRecodeFile cpp/KNIRecodeFile.c -I /usr/include/ -lKhiopsNativeInterface -ldl
+gcc -o KNIRecodeMTFiles cpp/KNIRecodeMTFiles.c -I /usr/include/ -lKhiopsNativeInterface -ldl
 ```
 
 On Windows, open a "Visual Studio Developer Console" and run:
