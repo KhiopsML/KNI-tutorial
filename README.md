@@ -1,5 +1,5 @@
 
-# Khiops Native Interface  v11.0.0-b.0
+# Khiops Native Interface  v11.0.0
 
 This project provides all the basics to use the Khiops Native Interface (KNI): installation and examples.
 
@@ -18,7 +18,7 @@ See [KhiopsNativeInterface.h](include/KhiopsNativeInterface.h) for a detailed de
 
 ## Windows
 
-Download [KNI-11.0.0-b.0.zip](https://github.com/KhiopsML/khiops/releases/tag/11.0.0/KNI-11.0.0-b.0.zip) and extract it to your machine. Set the environment variable `KNI_HOME` to the extracted directory. This variable is used in the following examples.
+Download [KNI-11.0.0.zip](https://github.com/KhiopsML/khiops/releases/tag/11.0.0/KNI-11.0.0.zip) and extract it to your machine. Set the environment variable `KNI_HOME` to the extracted directory. This variable is used in the following examples.
 
 ## Linux
 
@@ -43,6 +43,8 @@ Download the package according to the code name of your OS and install it with `
 - on Fedora-like distros: `sudo yum localinstall kni*.rpm`
 
 # Application examples
+
+Application examples are available in this repository. The main branch corresponds to the latest version of KNI. To explore older versions, switch between branches, which are named after their respective versions.
 
 Both examples in C and Java produce a sample binary `KNIRecodeFile`. It recodes an input file to an output file, using a Khiops dictionary from a dictionary file.
 
