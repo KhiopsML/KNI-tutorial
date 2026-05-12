@@ -12,15 +12,7 @@ to deploy a Khiops model for real-time scoring without temporary files.
 
 import sys
 import argparse
-from KNI import KNI
-
-
-class KNIError(Exception):
-    """Exception raised for KNI errors."""
-
-    def __init__(self, message, error_code=None):
-        super().__init__(message)
-        self.error_code = error_code
+from KNI import KNI, KNIError
 
 
 def recode_file(
@@ -50,12 +42,7 @@ def recode_file(
 
     # Set error log file
     if error_file_name:
-        ret_code = kni.set_log_file_name(error_file_name)
-        if ret_code != KNI.KNI_OK:
-            print(
-                f"Warning: Failed to set log file: {kni.get_error_message(ret_code)}",
-                file=sys.stderr,
-            )
+        kni.set_log_file_name(error_file_name)
 
     print(f"\nRecode records of {input_file_name} to {output_file_name}")
 
@@ -74,12 +61,6 @@ def recode_file(
             dictionary_file_name, dictionary_name, header_line, "\t"
         )
 
-        if stream_handle < 0:
-            raise KNIError(
-                f"Open stream failed: {kni.get_error_message(stream_handle)}",
-                stream_handle,
-            )
-
         try:
             # Process all records
             record_number = 0
@@ -92,28 +73,14 @@ def recode_file(
                     continue
 
                 # Recode the record
-                ret_code, output_record = kni.recode_stream_record(
-                    stream_handle, input_record
-                )
+                output_record = kni.recode_stream_record(stream_handle, input_record)
 
-                if ret_code == KNI.KNI_OK:
-                    # Write output record
-                    output_file.write(f"{output_record}\n")
-                    record_number += 1
-                else:
-                    raise KNIError(
-                        f"Recode failed at line {line_number}: "
-                        f"{kni.get_error_message(ret_code)}",
-                        ret_code,
-                    )
+                # Write output record
+                output_file.write(f"{output_record}\n")
+                record_number += 1
         finally:
             # Close stream
-            ret_code = kni.close_stream(stream_handle)
-            if ret_code != KNI.KNI_OK:
-                raise KNIError(
-                    f"Close stream failed: {kni.get_error_message(ret_code)}",
-                    ret_code,
-                )
+            kni.close_stream(stream_handle)
 
         print(f"{record_number} records recoded")
 

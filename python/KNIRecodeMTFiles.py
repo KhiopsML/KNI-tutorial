@@ -12,15 +12,7 @@ from Python. It supports secondary tables and external tables.
 
 import sys
 import argparse
-from KNI import KNI
-
-
-class KNIError(Exception):
-    """Exception raised for KNI errors."""
-
-    def __init__(self, message, error_code=None):
-        super().__init__(message)
-        self.error_code = error_code
+from KNI import KNI, KNIError
 
 
 def recode_mt_files(
@@ -57,12 +49,7 @@ def recode_mt_files(
 
     # Set error log file
     if error_file:
-        ret_code = kni.set_log_file_name(error_file)
-        if ret_code != KNI.KNI_OK:
-            print(
-                f"Warning: Failed to set log file: {kni.get_error_message(ret_code)}",
-                file=sys.stderr,
-            )
+        kni.set_log_file_name(error_file)
 
     # Set max memory if specified
     if max_memory:
@@ -81,12 +68,6 @@ def recode_mt_files(
         dictionary_file, dictionary_name, main_header, field_separator
     )
 
-    if stream_handle < 0:
-        raise KNIError(
-            f"Open stream failed: {kni.get_error_message(stream_handle)}",
-            stream_handle,
-        )
-
     try:
         # Set secondary table headers
         secondary_files = {}
@@ -97,15 +78,7 @@ def recode_mt_files(
             with open(sec_file, "r", encoding="utf-8") as f:
                 sec_header = f.readline().rstrip()
 
-            ret_code = kni.set_secondary_header_line(
-                stream_handle, data_path, sec_header
-            )
-            if ret_code != KNI.KNI_OK:
-                raise KNIError(
-                    f"Set secondary header failed for {data_path}: "
-                    f"{kni.get_error_message(ret_code)}",
-                    ret_code,
-                )
+            kni.set_secondary_header_line(stream_handle, data_path, sec_header)
 
             # Store opened file for reading records
             secondary_files[data_path] = {
@@ -118,22 +91,12 @@ def recode_mt_files(
 
         # Set external tables
         for spec in external_specs:
-            ret_code = kni.set_external_table(
+            kni.set_external_table(
                 stream_handle, spec["root"], spec.get("path", ""), spec["file"]
             )
-            if ret_code != KNI.KNI_OK:
-                raise KNIError(
-                    f"Set external table failed: {kni.get_error_message(ret_code)}",
-                    ret_code,
-                )
 
         # Finish opening stream (required for multi-table)
-        ret_code = kni.finish_opening_stream(stream_handle)
-        if ret_code != KNI.KNI_OK:
-            raise KNIError(
-                f"Finish opening stream failed: {kni.get_error_message(ret_code)}",
-                ret_code,
-            )
+        kni.finish_opening_stream(stream_handle)
 
         # Load all secondary records into memory indexed by key
         for data_path, sec_info in secondary_files.items():
@@ -179,29 +142,14 @@ def recode_mt_files(
                 for data_path, sec_info in secondary_files.items():
                     matching_records = sec_info["records"].get(main_key, [])
                     for sec_record in matching_records:
-                        ret_code = kni.set_secondary_input_record(
+                        kni.set_secondary_input_record(
                             stream_handle, data_path, sec_record
                         )
-                        if ret_code != KNI.KNI_OK:
-                            raise KNIError(
-                                f"Set secondary record failed at line {line_number}: "
-                                f"{kni.get_error_message(ret_code)}",
-                                ret_code,
-                            )
 
                 # Recode the main record
-                ret_code, output_record = kni.recode_stream_record(
-                    stream_handle, main_record
-                )
-                if ret_code == KNI.KNI_OK:
-                    out_file.write(f"{output_record}\n")
-                    record_number += 1
-                else:
-                    raise KNIError(
-                        f"Recode failed at line {line_number}: "
-                        f"{kni.get_error_message(ret_code)}",
-                        ret_code,
-                    )
+                output_record = kni.recode_stream_record(stream_handle, main_record)
+                out_file.write(f"{output_record}\n")
+                record_number += 1
 
         print(f"{record_number} records recoded")
     finally:
@@ -211,12 +159,7 @@ def recode_mt_files(
                 sec_info["file"].close()
 
         # Close stream
-        ret_code = kni.close_stream(stream_handle)
-        if ret_code != KNI.KNI_OK:
-            raise KNIError(
-                f"Close stream failed: {kni.get_error_message(ret_code)}",
-                ret_code,
-            )
+        kni.close_stream(stream_handle)
 
 
 def main():

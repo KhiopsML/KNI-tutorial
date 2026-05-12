@@ -16,6 +16,14 @@ import os
 from pathlib import Path
 
 
+class KNIError(Exception):
+    """Exception raised for KNI errors."""
+
+    def __init__(self, message, error_code=None):
+        super().__init__(message)
+        self.error_code = error_code
+
+
 class KNI:
     """Python wrapper for Khiops Native Interface using ctypes."""
 
@@ -188,8 +196,9 @@ class KNI:
         Args:
             log_file_name: Path to log file (str or bytes, empty string for no logging)
 
-        Returns:
-            KNI_OK on success, negative error code on failure
+        Raises:
+            KNIError: If setting log file fails
+            TypeError: If log_file_name is not str or bytes
         """
         if isinstance(log_file_name, str):
             log_file_name_bytes = log_file_name.encode("utf-8")
@@ -199,7 +208,12 @@ class KNI:
             raise TypeError(
                 f"log_file_name must be str or bytes, not {type(log_file_name).__name__}"
             )
-        return self._lib.KNISetLogFileName(log_file_name_bytes)
+        ret_code = self._lib.KNISetLogFileName(log_file_name_bytes)
+        if ret_code != self.KNI_OK:
+            raise KNIError(
+                f"Failed to set log file: {self.get_error_message(ret_code)}",
+                ret_code,
+            )
 
     def open_stream(
         self, dictionary_file_name, dictionary_name, header_line, field_separator="\t"
@@ -214,7 +228,11 @@ class KNI:
             field_separator: Character used to separate fields (str or bytes, default: tab)
 
         Returns:
-            Positive stream handle on success, negative error code on failure
+            Stream handle (positive integer)
+
+        Raises:
+            KNIError: If opening stream fails
+            TypeError: If arguments have invalid types
         """
         # Type checking and conversion
         if isinstance(dictionary_file_name, str):
@@ -252,12 +270,18 @@ class KNI:
                 f"field_separator must be str or bytes, not {type(field_separator).__name__}"
             )
 
-        return self._lib.KNIOpenStream(
+        stream_handle = self._lib.KNIOpenStream(
             dictionary_file_name_bytes,
             dictionary_name_bytes,
             header_line_bytes,
             field_separator_byte,
         )
+        if stream_handle < 0:
+            raise KNIError(
+                f"Failed to open stream: {self.get_error_message(stream_handle)}",
+                stream_handle,
+            )
+        return stream_handle
 
     def close_stream(self, stream_handle):
         """
@@ -266,14 +290,20 @@ class KNI:
         Args:
             stream_handle: Handle returned by open_stream
 
-        Returns:
-            KNI_OK on success, negative error code on failure
+        Raises:
+            KNIError: If closing stream fails
+            TypeError: If stream_handle is not int
         """
         if not isinstance(stream_handle, int):
             raise TypeError(
                 f"stream_handle must be int, not {type(stream_handle).__name__}"
             )
-        return self._lib.KNICloseStream(stream_handle)
+        ret_code = self._lib.KNICloseStream(stream_handle)
+        if ret_code != self.KNI_OK:
+            raise KNIError(
+                f"Failed to close stream: {self.get_error_message(ret_code)}",
+                ret_code,
+            )
 
     def recode_stream_record(self, stream_handle, input_record, max_output_length=None):
         """
@@ -285,9 +315,11 @@ class KNI:
             max_output_length: Maximum output buffer size (default: KNI_MaxRecordLength)
 
         Returns:
-            Tuple (return_code, output_record)
-            - return_code: KNI_OK on success, negative error code on failure
-            - output_record: Recoded output string (None on failure)
+            Recoded output string
+
+        Raises:
+            KNIError: If recoding fails
+            TypeError: If arguments have invalid types
         """
         if not isinstance(stream_handle, int):
             raise TypeError(
@@ -316,10 +348,12 @@ class KNI:
             max_output_length,
         )
 
-        if ret_code == self.KNI_OK:
-            return ret_code, output_buffer.value.decode("utf-8")
-        else:
-            return ret_code, None
+        if ret_code != self.KNI_OK:
+            raise KNIError(
+                f"Failed to recode record: {self.get_error_message(ret_code)}",
+                ret_code,
+            )
+        return output_buffer.value.decode("utf-8")
 
     def set_secondary_header_line(self, stream_handle, data_path, header_line):
         """
@@ -330,8 +364,9 @@ class KNI:
             data_path: Data path identifying the secondary table (str or bytes)
             header_line: Header line with field names (str or bytes)
 
-        Returns:
-            KNI_OK on success, negative error code on failure
+        Raises:
+            KNIError: If setting secondary header fails
+            TypeError: If arguments have invalid types
         """
         if not isinstance(stream_handle, int):
             raise TypeError(
@@ -353,9 +388,14 @@ class KNI:
             raise TypeError(
                 f"header_line must be str or bytes, not {type(header_line).__name__}"
             )
-        return self._lib.KNISetSecondaryHeaderLine(
+        ret_code = self._lib.KNISetSecondaryHeaderLine(
             stream_handle, data_path_bytes, header_line_bytes
         )
+        if ret_code != self.KNI_OK:
+            raise KNIError(
+                f"Failed to set secondary header line: {self.get_error_message(ret_code)}",
+                ret_code,
+            )
 
     def set_external_table(
         self, stream_handle, data_root, data_path, data_table_file_name
@@ -369,8 +409,9 @@ class KNI:
             data_path: Data path for secondary external tables (str or bytes, empty for root)
             data_table_file_name: Path to the external table data file (str or bytes)
 
-        Returns:
-            KNI_OK on success, negative error code on failure
+        Raises:
+            KNIError: If setting external table fails
+            TypeError: If arguments have invalid types
         """
         if not isinstance(stream_handle, int):
             raise TypeError(
@@ -400,12 +441,17 @@ class KNI:
             raise TypeError(
                 f"data_table_file_name must be str or bytes, not {type(data_table_file_name).__name__}"
             )
-        return self._lib.KNISetExternalTable(
+        ret_code = self._lib.KNISetExternalTable(
             stream_handle,
             data_root_bytes,
             data_path_bytes,
             data_table_file_name_bytes,
         )
+        if ret_code != self.KNI_OK:
+            raise KNIError(
+                f"Failed to set external table: {self.get_error_message(ret_code)}",
+                ret_code,
+            )
 
     def finish_opening_stream(self, stream_handle):
         """
@@ -416,14 +462,20 @@ class KNI:
         Args:
             stream_handle: Handle returned by open_stream
 
-        Returns:
-            KNI_OK on success, negative error code on failure
+        Raises:
+            KNIError: If finishing opening stream fails
+            TypeError: If stream_handle is not int
         """
         if not isinstance(stream_handle, int):
             raise TypeError(
                 f"stream_handle must be int, not {type(stream_handle).__name__}"
             )
-        return self._lib.KNIFinishOpeningStream(stream_handle)
+        ret_code = self._lib.KNIFinishOpeningStream(stream_handle)
+        if ret_code != self.KNI_OK:
+            raise KNIError(
+                f"Failed to finish opening stream: {self.get_error_message(ret_code)}",
+                ret_code,
+            )
 
     def set_secondary_input_record(self, stream_handle, data_path, input_record):
         """
@@ -436,8 +488,9 @@ class KNI:
             data_path: Data path identifying the secondary table (str or bytes)
             input_record: Secondary input record string or bytes
 
-        Returns:
-            KNI_OK on success, negative error code on failure
+        Raises:
+            KNIError: If setting secondary input record fails
+            TypeError: If arguments have invalid types
         """
         if not isinstance(stream_handle, int):
             raise TypeError(
@@ -459,9 +512,14 @@ class KNI:
             raise TypeError(
                 f"input_record must be str or bytes, not {type(input_record).__name__}"
             )
-        return self._lib.KNISetSecondaryInputRecord(
+        ret_code = self._lib.KNISetSecondaryInputRecord(
             stream_handle, data_path_bytes, input_record_bytes
         )
+        if ret_code != self.KNI_OK:
+            raise KNIError(
+                f"Failed to set secondary input record: {self.get_error_message(ret_code)}",
+                ret_code,
+            )
 
     def get_stream_max_memory(self):
         """
