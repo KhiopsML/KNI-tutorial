@@ -12,7 +12,7 @@ to deploy a Khiops model for real-time scoring without temporary files.
 
 import sys
 import argparse
-from KNI import KNI, KNIError
+from kni import KNI, KNIError
 
 
 def recode_file(
@@ -129,14 +129,8 @@ def main():
             args.error_file,
         )
         return 0
-    except KNIError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        return 1
     except FileNotFoundError as e:
         print(f"Error: File not found: {e.filename}", file=sys.stderr)
-        return 1
-    except ValueError as e:
-        print(f"Error: {e}", file=sys.stderr)
         return 1
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)

@@ -12,7 +12,7 @@ from Python. It supports secondary tables and external tables.
 
 import sys
 import argparse
-from KNI import KNI, KNIError
+from kni import KNI, KNIError
 
 
 def recode_mt_files(
@@ -258,9 +258,6 @@ Example:
             args.max_memory,
         )
         return 0
-    except KNIError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        return 1
     except FileNotFoundError as e:
         print(f"Error: File not found: {e.filename}", file=sys.stderr)
         return 1

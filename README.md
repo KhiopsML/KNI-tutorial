@@ -158,51 +158,38 @@ java -cp kni.jar;jna.jar KNIRecodeFile data/ModelingIris.kdic SNB_Iris ^
 
 # Example with Python
 
-The files are located in [python directory](python/). They use Python's `ctypes` to call the KhiopsNativeInterface shared library directly.
+The files are located in [python directory](python/). They use the `kni` Python package from the pip package `khiops-kni` to call the KhiopsNativeInterface shared library.
 
 ## Requirements
 
 - Python 3.10 or later
-- The KNI shared library must be installed and accessible (via `KNI_HOME` environment variable or standard system paths)
+- The `khiops-kni` package:
+
+```bash
+pip install khiops-kni
+```
+
+This installs both the `kni` Python module and the KhiopsNativeInterface shared library. No `KNI_HOME` environment variable is needed.
 
 ## Scripts
 
-- `KNI.py`: Python wrapper for KhiopsNativeInterface using ctypes
 - `KNIRecodeFile.py`: Single-table recoding example
 - `KNIRecodeMTFiles.py`: Multi-table recoding example
+
+**API Documentation**: See [Python API Reference](python/docs/kni.md) for detailed documentation of the `kni` module.
 
 ## Launch
 
 Recode the "Iris" dataset from the data directory using the `SNB_Iris` classifier dictionary.
 
-On Linux:
-
 ```bash
-python3 python/KNIRecodeFile.py data/ModelingIris.kdic SNB_Iris \
+python python/KNIRecodeFile.py data/ModelingIris.kdic SNB_Iris \
     data/Iris.txt R_Iris_python.txt
-```
-
-On Windows:
-
-```cmd
-set path=%KNI_HOME%/bin;%path%
-python python\KNIRecodeFile.py data/ModelingIris.kdic SNB_Iris ^
-     data/Iris.txt R_Iris_python.txt
 ```
 
 For the multi-table "Splice Junction" example:
 
-On Linux:
-
 ```bash
-python3 python/KNIRecodeMTFiles.py -d data/ModelingSpliceJunction.kdic SNB_SpliceJunction \
+python python/KNIRecodeMTFiles.py -d data/ModelingSpliceJunction.kdic SNB_SpliceJunction \
     -i data/SpliceJunction.txt 1 -s DNA data/SpliceJunctionDNA.txt 1 -o R_SpliceJunction_python.txt
-```
-
-On Windows:
-
-```cmd
-set path=%KNI_HOME%/bin;%path%
-python python\KNIRecodeMTFiles.py -d data/ModelingSpliceJunction.kdic SNB_SpliceJunction ^
-     -i data/SpliceJunction.txt 1 -s DNA data/SpliceJunctionDNA.txt 1 -o R_SpliceJunction_python.txt
 ```
