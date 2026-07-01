@@ -152,7 +152,7 @@ Close a KNI stream.
 
 **Arguments**:
 
-- `stream_handle` - Handle returned by open_stream
+- `stream_handle` - Handle returned by open_stream (int)
   
 
 **Raises**:
@@ -202,7 +202,7 @@ Set the header line of a secondary table (multi-table only).
 
 **Arguments**:
 
-- `stream_handle` - Handle returned by open_stream
+- `stream_handle` - Handle returned by open_stream (int)
 - `data_path` - Data path identifying the secondary table (str or bytes)
 - `header_line` - Header line with field names (str or bytes)
   
@@ -226,7 +226,7 @@ Set the name of a data file for an external table (multi-table only).
 
 **Arguments**:
 
-- `stream_handle` - Handle returned by open_stream
+- `stream_handle` - Handle returned by open_stream (int)
 - `data_root` - Root dictionary of the external table (str or bytes)
 - `data_path` - Data path for secondary external tables (str or bytes, empty for root)
 - `data_table_file_name` - Path to the external table data file (str or bytes)
@@ -251,7 +251,7 @@ Must be called after all secondary headers and external tables are set.
 
 **Arguments**:
 
-- `stream_handle` - Handle returned by open_stream
+- `stream_handle` - Handle returned by open_stream (int)
   
 
 **Raises**:
@@ -274,7 +274,7 @@ All secondary records must be set before recoding the primary record.
 
 **Arguments**:
 
-- `stream_handle` - Handle returned by open_stream
+- `stream_handle` - Handle returned by open_stream (int)
 - `data_path` - Data path identifying the secondary table (str or bytes)
 - `input_record` - Secondary input record (str or bytes)
   
@@ -310,7 +310,7 @@ Set the maximum amount of memory (in MB) for stream opening.
 
 **Arguments**:
 
-- `max_mb` - Maximum memory in MB
+- `max_mb` - Maximum memory in MB (int)
   
 
 **Returns**:
