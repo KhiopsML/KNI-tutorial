@@ -1,5 +1,5 @@
 
-# Khiops Native Interface  v11.0.1
+# Khiops Native Interface  v11.0.2
 
 This project provides all the basics to use the Khiops Native Interface (KNI): installation and examples.
 
@@ -35,11 +35,11 @@ See [KhiopsNativeInterface.h](include/KhiopsNativeInterface.h) for a detailed de
 
 ## Windows
 
-Download [KNI-11.0.1.zip](https://github.com/KhiopsML/khiops/releases/tag/11.0.1/KNI-11.0.1.zip) and extract it to your machine. Set the environment variable `KNI_HOME` to the extracted directory. This variable is used in the following examples.
+Download [KNI-11.0.2.zip](https://github.com/KhiopsML/khiops/releases/tag/11.0.2/KNI-11.0.2.zip) and extract it to your machine. Set the environment variable `KNI_HOME` to the extracted directory. This variable is used in the following examples.
 
 ## Linux
 
-On Linux, go to the [release page](https://github.com/KhiopsML/khiops/releases/tag/11.0.1/) and download the KNI package. The name of the package begins with **kni** and ends with the **code name** of the OS. The code name is in the release file of the distribution (here, it is "jammy"):
+On Linux, go to the [release page](https://github.com/KhiopsML/khiops/releases/tag/11.0.2/) and download the KNI package. The name of the package begins with **kni** and ends with the **code name** of the OS. The code name is in the release file of the distribution (here, it is "jammy"):
 ```bash
 $ cat /etc/os-release
 PRETTY_NAME="Ubuntu 22.04.4 LTS"
@@ -162,7 +162,7 @@ The files are located in [python directory](python/). They use the `kni` Python 
 
 ## Requirements
 
-- Python 3.10 or later
+- Python 3.11 or later
 - The `khiops-kni` package:
 
 ```bash
